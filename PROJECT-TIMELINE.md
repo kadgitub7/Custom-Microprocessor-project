@@ -40,6 +40,5 @@ The main point to emphasize is that you want to reduce the amount of hardware co
 | Simulation | microprocesser_files\single_cycle_processor_files\simulation_files\instruction_memory_tb.v |
 | Output | microprocesser_files\single_cycle_processor_files\simulation_files\output\instruction_memory_tb_output.txt |
 | Waveform | microprocesser_files\single_cycle_processor_files\simulation_files\waveform\instruction_memory_tb_waveform.png |
-| Memory File |
-microprocesser_files\single_cycle_processor_files\simulation_files\rom_files\program.mem |
+| Memory File |microprocesser_files\single_cycle_processor_files\simulation_files\rom_files\program.mem |
 
