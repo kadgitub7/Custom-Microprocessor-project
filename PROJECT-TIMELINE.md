@@ -14,3 +14,14 @@ The main point to emphasize is that you want to reduce the amount of hardware co
 
 ## Single Cycle Processor
 
+1) Design the state elements:
+    a) Program Counter Register -> 32 bit D flip flop register with synchronous reset
+    -> Utilized a 32 bit D master slave flip flop. When the clock is high on the positive rising edge, we sample the input D and assign it to Q. If the reset is high then Q goes to 0. D is a 32 bit value.
+    -> The main purpose of this is to have single instructions stored so that we are then able to sequential conduct instructions. This PC stores the next intruction to follow.
+
+    The design file is found in: microprocesser_files\single_cycle_processor_files\design_files\PC_reg.v
+    The simulation file is found in: microprocesser_files\single_cycle_processor_files\simulation_files\PC_reg_tb.v
+    The output from testbench can be found in: microprocesser_files\single_cycle_processor_files\simulation_files\output\PC_reg_tb_output.txt
+    The waveform from simulation can be found in: microprocesser_files\single_cycle_processor_files\simulation_files\waveform\PC_reg_tb_waveform.png
+
+    
