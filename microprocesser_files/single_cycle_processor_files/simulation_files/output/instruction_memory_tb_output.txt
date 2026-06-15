@@ -1,0 +1,7 @@
+addr = 00000000000000000000000000000000 | RD = 20020005
+addr = 00000000000000000000000000000100 | RD = 20030006
+addr = 00000000000000000000000000001000 | RD = 00432020
+xsim: Time (s): cpu = 00:00:08 ; elapsed = 00:00:06 . Memory (MB): peak = 3241.023 ; gain = 0.000
+INFO: [USF-XSim-96] XSim completed. Design snapshot 'instruction_memory_tb_behav' loaded.
+INFO: [USF-XSim-97] XSim simulation ran for 1000ns
+launch_simulation: Time (s): cpu = 00:00:11 ; elapsed = 00:00:14 . Memory (MB): peak = 3241.023 ; gain = 0.000
