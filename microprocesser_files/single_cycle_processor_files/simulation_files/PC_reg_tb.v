@@ -11,39 +11,39 @@ module PC_reg_tb();
     
     initial begin
         clk = 0;
-        reset = 0;
-        D = 0;
-        #10;
-        $display("clk = %b, reset = %b, D = %b, Q = %d, Q_not = %d", clk, reset, D, Q, Q_not);
-        
-        clk = 1;
-        reset = 0;
-        D = 0;
-        #10;
-        $display("clk = %b, reset = %b, D = %b, Q = %d, Q_not = %d", clk, reset, D, Q, Q_not);
-        
-        clk = 1;
         reset = 1;
         D = 0;
-        #10;
-        $display("clk = %b, reset = %b, D = %b, Q = %d, Q_not = %d", clk, reset, D, Q, Q_not);
+        #12;
         
         clk = 1;
         reset = 0;
+        D = 0;
+        #10;
+        $display("clk = %b, reset = %b, D = %b, Q = %b, Q_not = %d", clk, reset, D, Q, Q_not);
+        
+        clk = 1;
         D = 32'b1;
         #10;
-        $display("clk = %b, reset = %b, D = %b, Q = %d, Q_not = %d", clk, reset, D, Q, Q_not);
+        $display("clk = %b, reset = %b, D = %b, Q = %b, Q_not = %d", clk, reset, D, Q, Q_not);
+        
+        clk = 0;
+        D = 0;
+        #10;
+        $display("clk = %b, reset = %b, D = %b, Q = %b, Q_not = %d", clk, reset, D, Q, Q_not);
         
         clk = 1;
-        reset = 0;
+        D = 32'b1;
+        #10;
+        $display("clk = %b, reset = %b, D = %b, Q = %b, Q_not = %d", clk, reset, D, Q, Q_not);
+        
+        clk = 0;
         D = 32'b0;
         #10;
-        $display("clk = %b, reset = %b, D = %b, Q = %d, Q_not = %d", clk, reset, D, Q, Q_not);
+        $display("clk = %b, reset = %b, D = %b, Q = %b, Q_not = %d", clk, reset, D, Q, Q_not);
         
         clk = 1;
-        reset = 0;
         D = 32'b11111;
         #10;
-        $display("clk = %b, reset = %b, D = %b, Q = %d, Q_not = %d", clk, reset, D, Q, Q_not);
+        $display("clk = %b, reset = %b, D = %b, Q = %b, Q_not = %d", clk, reset, D, Q, Q_not);
     end
 endmodule
