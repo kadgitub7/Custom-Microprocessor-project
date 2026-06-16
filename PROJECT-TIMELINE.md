@@ -42,3 +42,15 @@ The main point to emphasize is that you want to reduce the amount of hardware co
 | Waveform | microprocesser_files\single_cycle_processor_files\simulation_files\waveform\instruction_memory_tb_waveform.png |
 | Memory File |microprocesser_files\single_cycle_processor_files\simulation_files\rom_files\program.mem |
 
+#### c) Register File, responsing to multi read and write actions
+
+- This is a system that is connected with the entire process of taking in instructions and calling actual function from the ALU. It acts to be able to read on mulitple ports the results of various operations as well as to write value after an operation is complete.
+- This block consists of ways to use 5 bit values to index into the specific index fo the register file as well as enables and clock based writing.
+
+| File Type | Location |
+|-----------|----------|
+| Design | microprocesser_files\single_cycle_processor_files\design_files\register_file.v |
+| Simulation | microprocesser_files\single_cycle_processor_files\simulation_files\register_file_tb.v |
+| Output | microprocesser_files\single_cycle_processor_files\simulation_files\output\register_file_tb_output.txt |
+| Waveform | microprocesser_files\single_cycle_processor_files\simulation_files\waveform\register_file_tb_waveform.png |
+
