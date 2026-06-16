@@ -54,3 +54,15 @@ The main point to emphasize is that you want to reduce the amount of hardware co
 | Output | microprocesser_files\single_cycle_processor_files\simulation_files\output\register_file_tb_output.txt |
 | Waveform | microprocesser_files\single_cycle_processor_files\simulation_files\waveform\register_file_tb_waveform.png |
 
+#### d) Data Memory File. This file stored a large memory which can both be written to or else read combinationally
+
+- This is an SRAM which holds the majority of information for the processor. Anything that is too big to store in the register file can be kept here. It takes longer to get the information from this section but it is larger.
+- The writing is used whenever there is an enable, the reading is done otherwise.
+
+| File Type | Location |
+|-----------|----------|
+| Design | microprocesser_files\single_cycle_processor_files\design_files\data_memory.v |
+| Simulation | microprocesser_files\single_cycle_processor_files\simulation_files\data_memory_tb.v |
+| Output | microprocesser_files\single_cycle_processor_files\simulation_files\output\data_memory_tb_output.txt |
+| Waveform | microprocesser_files\single_cycle_processor_files\simulation_files\waveform\data_memory_tb_waveform.png |
+
