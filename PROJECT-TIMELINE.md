@@ -66,3 +66,12 @@ The main point to emphasize is that you want to reduce the amount of hardware co
 | Output | microprocesser_files\single_cycle_processor_files\simulation_files\output\data_memory_tb_output.txt |
 | Waveform | microprocesser_files\single_cycle_processor_files\simulation_files\waveform\data_memory_tb_waveform.png |
 
+### 2. Connect the state elements together:
+
+#### a) Connecting the Program counter to the instruction memory
+- The program counter holds the instructions to the next instruction to execute. We then get the address which is fed through the output of the program counter to get the exact address of the instruction to execute in the instruction memory.
+
+| File Type | Location |
+|-----------|----------|
+| Design | microprocesser_files\single_cycle_processor_files\design_files\processor_top.v |
+
