@@ -75,3 +75,13 @@ The main point to emphasize is that you want to reduce the amount of hardware co
 |-----------|----------|
 | Design | microprocesser_files\single_cycle_processor_files\design_files\processor_top.v |
 
+#### b) Create Sign Extend module
+
+- This is a simple combinational module which is used to take the instruction output from the instruction memory and then it concatenates the instruction with 16 * the MVB. This makes the sign of the bit extended which is outputed.
+
+| File Type | Location |
+|-----------|----------|
+| Design | microprocesser_files\single_cycle_processor_files\design_files\sign_extend.v |
+| Simulation | microprocesser_files\single_cycle_processor_files\simulation_files\sign_extend_tb.v |
+| Output | microprocesser_files\single_cycle_processor_files\simulation_files\output\sign_extend_tb_output.txt |
+| Waveform | microprocesser_files\single_cycle_processor_files\simulation_files\waveform\sign_extend_tb_waveform.png |
