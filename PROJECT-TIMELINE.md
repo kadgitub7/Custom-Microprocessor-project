@@ -85,3 +85,15 @@ The main point to emphasize is that you want to reduce the amount of hardware co
 | Simulation | microprocesser_files\single_cycle_processor_files\simulation_files\sign_extend_tb.v |
 | Output | microprocesser_files\single_cycle_processor_files\simulation_files\output\sign_extend_tb_output.txt |
 | Waveform | microprocesser_files\single_cycle_processor_files\simulation_files\waveform\sign_extend_tb_waveform.png |
+
+
+#### c) Create ALU module
+
+- 
+
+| File Type | Location |
+|-----------|----------|
+| Design | microprocesser_files\single_cycle_processor_files\design_files\alu.v |
+| Simulation | microprocesser_files\single_cycle_processor_files\simulation_files\alu_tb.v |
+| Output | microprocesser_files\single_cycle_processor_files\simulation_files\output\alu_tb_output.txt |
+| Waveform | microprocesser_files\single_cycle_processor_files\simulation_files\waveform\alu_tb_waveform.png |
