@@ -89,7 +89,8 @@ The main point to emphasize is that you want to reduce the amount of hardware co
 
 #### c) Create ALU module
 
-- 
+- The ALU is the central computing element of the proccessor. It includes the ability to take certain control commands and perform action such as ADD, SUBTRACT, AND, OR, COMPARE.
+- This is done through a full adder, AND, OR gates, and compliment(NOT gates) inside the module which compute all the various value in parallel. Then these are fed through a multiplexer which process which output should be given as final based on the control signal which is a select line for the MUX.
 
 | File Type | Location |
 |-----------|----------|
