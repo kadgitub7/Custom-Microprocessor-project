@@ -98,3 +98,23 @@ The main point to emphasize is that you want to reduce the amount of hardware co
 | Simulation | microprocesser_files\single_cycle_processor_files\simulation_files\alu_tb.v |
 | Output | microprocesser_files\single_cycle_processor_files\simulation_files\output\alu_tb_output.txt |
 | Waveform | microprocesser_files\single_cycle_processor_files\simulation_files\waveform\alu_tb_waveform.png |
+
+#### c) Wire Top module and Create control unit
+
+- The top module was wired based on teh schematic in the textbook referenced. The wiring is done in a control flow where the elementary block are fed into each other. Different adders and mulitplexers are used to discern different inputs and to chose/compute the result.
+- The control unit was made using the truth table in the textbook and is wired to the top module appropriately.
+
+| File Type | Location |
+|-----------|----------|
+| Design | microprocesser_files\single_cycle_processor_files\design_files\processor_top.v |
+| Design | microprocesser_files\single_cycle_processor_files\design_files\control_unit.v |
+
+## Multicycle Processor
+### 0. Rationale behind multi cycle processor
+There are three main disadvantages with the single cycle processor.
+1) It requires the same time to do long instructions as does short instructions. Which means that short instructions take longer than they need to
+2) There are three adder elements. One in the ALU and two for the Program counter setter. Adders are expensive circuits and should be minimized when able. 
+3) There are mulitple memory blocks for different reasons. It is more efficient to have a single one that is large and holds all the information and can both be read and written to.
+
+The mulitcycle processor does this efficiently, it utilizes registers in teh middle processes so that long instructions go through the same time, but a short instruction can be finished early and exit with the result.
+It uses only 1 adder to do all its operations and uses 1 large memory file for everything.
