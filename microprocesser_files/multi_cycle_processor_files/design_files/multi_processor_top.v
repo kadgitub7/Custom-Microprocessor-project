@@ -42,6 +42,8 @@ module multi_processor_top(
 
     mux_gen pc_mux(.a(ALUResult), .b(AluOut), .sel(PCSrc), .out(PC_D));
 
+    control_unit control(.clk(clk), .reset(reset), .opcode(opcode), .funct(funct), .RegDst(RegDst), .IorD(IorD), .PCSrc(PCSrc), .ALUSrcB(ALUSrcB), .ALUSrcA(ALUSrcA), .IRWrite(IRWrite), .MemWrite(MemWrite), .PCWrite(PCWrite), .Branch(Branch), .RegWrite(RegWrite), .ALUControl(ALUControl));
+
     always @(posedge clk) begin
         if(IRWrite) begin
             instruction_storage_imm <= RD;
