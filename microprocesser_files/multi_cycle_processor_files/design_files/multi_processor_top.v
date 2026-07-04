@@ -3,6 +3,7 @@ module multi_processor_top(
 
 );
     wire reset_PC;
+    wire reset;
     wire [31:0] PC_D;
     wire [31:0] PC_Q;
     wire [31:0] PC_Q_not;
@@ -11,8 +12,10 @@ module multi_processor_top(
     wire WE;
     wire [31:0] RD;
 
-    wire [31:0] RD1;
-
+    wire [31:0] RD1, RD2, Adr, A3, WD3;
+    wire [2:0] ALUControl;
+    wire MemtoReg, RegDst, ALUSrcA, IorD, PCSrc, PCWrite, Branch, RegWrite, MemWrite;
+    wire [1:0] ALUSrcB;
     wire IRWrite;
     wire [31:0] extended_sign;
     wire [31:0] SrcA;
@@ -27,7 +30,7 @@ module multi_processor_top(
     reg [31:0] DataMemOut;
     reg [31:0] B;
 
-    PC_reg PC(.clk(clk), .reset(reset_PC), .PC_write((zero & Branch) | PC_write), .D(PC_D), .Q(PC_Q), .Q_not(PC_Q_not));
+    PC_reg PC(.clk(clk), .reset(reset_PC), .PC_write(PCWrite), .D(PC_D), .Q(PC_Q), .Q_not(PC_Q_not));
     data_memory DM(.addr(Adr), .WD(B), .clk(clk), .WE(MemWrite), .RD(RD));
     register_file regfile(.clk(clk), .WE3(RegWrite), .addr1(instruction_storage_imm[25:21]), .addr2(instruction_storage_imm[20:16]), .addr3(A3), .WD3(WD3), .RD1(RD1), .RD2(RD2));
     sign_extend se(.instr(instruction_storage_imm[15:0]), .extended_instr(extended_sign));
@@ -42,7 +45,7 @@ module multi_processor_top(
 
     mux_gen pc_mux(.a(ALUResult), .b(AluOut), .sel(PCSrc), .out(PC_D));
 
-    control_unit control(.clk(clk), .reset(reset), .opcode(opcode), .funct(funct), .RegDst(RegDst), .IorD(IorD), .PCSrc(PCSrc), .ALUSrcB(ALUSrcB), .ALUSrcA(ALUSrcA), .IRWrite(IRWrite), .MemWrite(MemWrite), .PCWrite(PCWrite), .Branch(Branch), .RegWrite(RegWrite), .ALUControl(ALUControl));
+    control_unit control(.clk(clk), .reset(reset), .opcode(instruction_storage_imm[31:26]), .funct(instruction_storage_imm[5:0]), .RegDst(RegDst), .IorD(IorD), .PCSrc(PCSrc), .ALUSrcB(ALUSrcB), .ALUSrcA(ALUSrcA), .IRWrite(IRWrite), .MemWrite(MemWrite), .PCWrite(PCWrite), .Branch(Branch), .RegWrite(RegWrite), .ALUControl(ALUControl));
 
     always @(posedge clk) begin
         if(IRWrite) begin

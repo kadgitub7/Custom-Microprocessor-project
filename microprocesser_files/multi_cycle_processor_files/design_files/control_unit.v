@@ -16,84 +16,96 @@ module control_unit(
     output wire RegWrite,
     output wire [2:0] ALUControl
 );    
-    wire [1:0] ALUOp;
     
     reg [2:0] state;
+    reg [2:0] next_state;
+    
+    wire [1:0] ALUOp;
 
-    reg FETCH = 3'b000;
-    reg DECODE = 3'b001;
-    reg MemoryAdr = 3'b010;
-    reg MemRead = 3'b011;
-    reg MemWriteState = 3'b100;
-    reg MemWrite = 3'b101;
-    reg EXECUTE = 3'b110;
-    reg ALUWriteBack = 3'b111;
+    // State parameters
+    parameter FETCH = 3'b000;
+    parameter DECODE = 3'b001;
+    parameter MemoryAdr = 3'b010;
+    parameter MemRead = 3'b011;
+    parameter MemWrite_State = 3'b100;
+    parameter Mem_Write = 3'b101;
+    parameter EXECUTE = 3'b110;
+    parameter ALUWriteBack = 3'b111;
 
-
+    // Sequential state update
     always @(posedge clk) begin
         if (reset) begin
             state <= FETCH;
         end else begin
-            case (state)
-                FETCH: 
-                    IorD <= 1'b0; // Fetch instruction
-                    ALUSrcA <= 1'b0; // Use PC as ALU input A
-                    ALUSrcB <= 2'b01; // Use 4 as ALU input B
-                    ALUOp <= 2'b00; // ALU performs addition
-                    PCSrc <= 1'b0; // Next PC is PC + 4
-                    PCWrite <= 1'b1; // Enable PC write
-                    IRWrite <= 1'b1; // Enable instruction register write
-                    state <= DECODE;
-                DECODE:
-                    if (Opcode == 6'b100011 || Opcode == 6'b101011) begin
-                        state <= MemoryAdr; // MEMORYAdr
-                    end 
-                    else if (Opcode == 6'b000000) begin
-                        state <= EXECUTE; // R-type instruction
-                    end 
-                MemoryAdr:
-                    ALUSrcA <= 1'b1; // Use register A as ALU input A
-                    ALUSrcB <= 2'b10; // Use sign-extended immediate as AL
-                    ALUOp <= 2'b00; // ALU performs addition 
-                    if (Opcode == 6'b100011) begin
-                        state <= 3'b011; // MemRead
-                    end
-                    else if (Opcode == 6'b101011) begin
-                        state <= 3'b101; // MemWriteState
-                    end
-                MemRead:
-                    IorD <= 1'b1; // Enable memory read
-                    state <= 3'b100; // WriteBack
-                MemWriteState:
-                    RegDst <= 1'b0; // Write to register file
-                    MemtoReg <= 1'b1; // Write data from memory to register
-                    RegWrite <= 1'b1; // Enable register write
-                    state <= FETCH; // Go back to FETCH
-                MemWrite:
-                    IorD <= 1'b1; // Enable memory write
-                    MemWrite <= 1'b1; // Enable memory write
-                    state <= FETCH; // Go back to FETCH
-                EXECUTE:
-                    ALUSrcA <= 1'b1; // Use register A as ALU input A
-                    ALUSrcB <= 2'b00; // Use register B as ALU input B
-                    ALUOp <= 2'b10; // ALU performs operation based on funct field
-                    state <= ALUWriteBack; // Go back to FETCH
-                ALUWriteBack:
-                    RegDst <= 1'b1; // Write to register file
-                    MemtoReg <= 1'b0; // Write data from ALU to register
-                    RegWrite <= 1'b1; // Enable register write
-                    state <= FETCH; // Go back to FETCH
-                default: state <= FETCH;
-            endcase
+            state <= next_state;
         end
     end
 
+    // Next state logic (combinational)
+    always @(*) begin
+        case (state)
+            FETCH: 
+                next_state = DECODE;
+            DECODE:
+                if (opcode == 6'b100011 || opcode == 6'b101011) begin
+                    next_state = MemoryAdr;
+                end 
+                else if (opcode == 6'b000000) begin
+                    next_state = EXECUTE;
+                end
+                else begin
+                    next_state = FETCH;
+                end
+            MemoryAdr:
+                if (opcode == 6'b100011) begin
+                    next_state = MemRead;
+                end
+                else if (opcode == 6'b101011) begin
+                    next_state = Mem_Write;
+                end
+                else begin
+                    next_state = FETCH;
+                end
+            MemRead:
+                next_state = MemWrite_State;
+            MemWrite_State:
+                next_state = FETCH;
+            Mem_Write:
+                next_state = FETCH;
+            EXECUTE:
+                next_state = ALUWriteBack;
+            ALUWriteBack:
+                next_state = FETCH;
+            default: 
+                next_state = FETCH;
+        endcase
+    end
 
+    // Output control signals (combinational based on current state)
+    assign IRWrite = (state == FETCH) ? 1'b1 : 1'b0;
+    assign PCWrite = (state == FETCH) ? 1'b1 : 1'b0;
+    assign Branch = 1'b0; // No branch instruction support in basic implementation
+    
+    assign ALUSrcA = (state == FETCH || state == DECODE) ? 1'b0 : 1'b1;
+    assign ALUSrcB = (state == FETCH) ? 2'b01 :
+                     (state == MemoryAdr) ? 2'b10 :
+                     (state == EXECUTE) ? 2'b00 :
+                     2'b00;
+    
+    assign IorD = (state == FETCH) ? 1'b0 : 1'b1;
+    assign PCSrc = 1'b0; // Always use ALU result for next PC (addition result)
+    
+    assign RegDst = (state == ALUWriteBack) ? 1'b1 : 1'b0;
+    assign RegWrite = (state == MemWrite_State || state == ALUWriteBack) ? 1'b1 : 1'b0;
+    assign MemtoReg = (state == MemWrite_State) ? 1'b1 : 1'b0;
+    assign MemWrite = (state == Mem_Write) ? 1'b1 : 1'b0;
 
+    // ALU operation control
     assign ALUOp = (opcode == 6'b000000) ? 2'b10 : // R-type instructions
                    (opcode == 6'b000100) ? 2'b01 : // BEQ instruction
                    2'b00; // Default to load/store instructions
 
+    // ALU control signals based on ALUOp and funct field
     assign ALUControl = (ALUOp == 2'b00) ? 3'b010 : // Load/Store: ADD
                         (ALUOp == 2'b01) ? 3'b110 : // Branch: SUB
                         (ALUOp == 2'b10) ? ((funct == 6'b100000) ? 3'b010 : // R-type: ADD
