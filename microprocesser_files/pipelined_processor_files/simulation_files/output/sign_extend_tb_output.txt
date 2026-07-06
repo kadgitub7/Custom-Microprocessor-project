@@ -1,0 +1,8 @@
+Input: 1010101010101010, Output: 11111111111111111010101010101010
+Input: 0000101010101010, Output: 00000000000000000000101010101010
+Input: 0000000010101010, Output: 00000000000000000000000010101010
+Input: 0000000000001010, Output: 00000000000000000000000000001010
+xsim: Time (s): cpu = 00:00:07 ; elapsed = 00:00:06 . Memory (MB): peak = 1960.348 ; gain = 0.000
+INFO: [USF-XSim-96] XSim completed. Design snapshot 'sign_extend_tb_behav' loaded.
+INFO: [USF-XSim-97] XSim simulation ran for 1000ns
+launch_simulation: Time (s): cpu = 00:00:12 ; elapsed = 00:00:16 . Memory (MB): peak = 1960.348 ; gain = 0.000
