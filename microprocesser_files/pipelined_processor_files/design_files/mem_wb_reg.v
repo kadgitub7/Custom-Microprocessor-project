@@ -6,6 +6,7 @@ module mem_wb_reg(
     input [4:0] Rt_M,
     input [4:0] Rd_M,
 
+    input RegDst_M,
     input MemtoReg_M,
     input RegWrite_M,
 
@@ -14,6 +15,7 @@ module mem_wb_reg(
     output reg [4:0] Rt_W,
     output reg [4:0] Rd_W,
 
+    output reg RegDst_W,
     output reg MemtoReg_W,
     output reg RegWrite_W
 );
@@ -25,6 +27,7 @@ begin
     Rt_W <= Rt_M;
     Rd_W <= Rd_M;
 
+    RegDst_W <= RegDst_M;
     MemtoReg_W <= MemtoReg_M;
     RegWrite_W <= RegWrite_M;
 end

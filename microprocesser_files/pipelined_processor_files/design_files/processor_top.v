@@ -36,7 +36,7 @@ module processor_top(
         .WE3(RegWrite_W),
         .addr1(Rs_D),
         .addr2(Rt_D),
-        .addr3(Rd_W),
+        .addr3(WriteRegW),
         .WD3(WB_DataW),
         .RD1(RD1_D),
         .RD2(RD2_D)
@@ -112,7 +112,7 @@ module processor_top(
     // ========== EX/MEM PIPELINE REGISTER ==========
     wire [31:0] ALUOutM, RD2_M;
     wire [4:0] Rt_M, Rd_M;
-    wire MemtoReg_M, RegWrite_M, MemWrite_M, Branch_M;
+    wire RegDst_M, MemtoReg_M, RegWrite_M, MemWrite_M, Branch_M;
 
     ex_mem_reg ex_mem(
         .clk(clk),
@@ -120,6 +120,7 @@ module processor_top(
         .RD2_E(RD2_E),
         .Rt_E(Rt_E),
         .Rd_E(Rd_E),
+        .RegDst_E(RegDst_E),
         .MemtoReg_E(MemtoReg_E),
         .RegWrite_E(RegWrite_E),
         .MemWrite_E(MemWrite_E),
@@ -128,6 +129,7 @@ module processor_top(
         .RD2_M(RD2_M),
         .Rt_M(Rt_M),
         .Rd_M(Rd_M),
+        .RegDst_M(RegDst_M),
         .MemtoReg_M(MemtoReg_M),
         .RegWrite_M(RegWrite_M),
         .MemWrite_M(MemWrite_M),
@@ -148,7 +150,7 @@ module processor_top(
     // ========== MEM/WB PIPELINE REGISTER ==========
     wire [31:0] ReadDataW, ALUOutW;
     wire [4:0] Rt_W, Rd_W;
-    wire MemtoReg_W, RegWrite_W;
+    wire RegDst_W, MemtoReg_W, RegWrite_W;
 
     mem_wb_reg mem_wb(
         .clk(clk),
@@ -156,18 +158,28 @@ module processor_top(
         .ALUOutM(ALUOutM),
         .Rt_M(Rt_M),
         .Rd_M(Rd_M),
+        .RegDst_M(RegDst_M),
         .MemtoReg_M(MemtoReg_M),
         .RegWrite_M(RegWrite_M),
         .ReadDataW(ReadDataW),
         .ALUOutW(ALUOutW),
         .Rt_W(Rt_W),
         .Rd_W(Rd_W),
+        .RegDst_W(RegDst_W),
         .MemtoReg_W(MemtoReg_W),
         .RegWrite_W(RegWrite_W)
     );
 
     // ========== WRITEBACK STAGE (W) ==========
     wire [31:0] WB_DataW;
+    wire [4:0] WriteRegW;
+
+    mux_gen write_reg_mux(
+        .a(Rt_W),
+        .b(Rd_W),
+        .sel(RegDst_W),
+        .out(WriteRegW)
+    );
 
     mux_gen wb_mux(
         .a(ALUOutW),
