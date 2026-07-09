@@ -23,6 +23,9 @@ module control_unit(
 
     wire is_posit_add = (opcode == 6'b000000 && funct == 6'b101100);
     wire is_posit_mul = (opcode == 6'b000000 && funct == 6'b101101);
+    wire is_bnn_xnor = (opcode == 6'b111100);
+    wire is_bnn_accum = (opcode == 6'b111101);
+    wire is_bnn_activate = (opcode == 6'b111110);
 
     assign ALUControl = (ALUOp == 2'b00) ? 3'b010 : // Load/Store: ADD
                         (ALUOp == 2'b01) ? 3'b110 : // Branch: SUB
@@ -33,6 +36,7 @@ module control_unit(
                                             (funct == 6'b100100) ? 3'b000 : // R-type: AND
                                             (funct == 6'b100101) ? 3'b001 : // R-type: OR
                                             3'b000) : // Default to AND for unknown funct
+                        (is_bnn_xnor || is_bnn_accum || is_bnn_activate) ? 3'b100 : // BNN co-processor op
                         3'b000; // Default to AND for unknown ALUOp
 
 endmodule

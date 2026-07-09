@@ -123,3 +123,5 @@ It uses only 1 adder to do all its operations and uses 1 large memory file for e
 ### 1. Posit varient
 Posits are used because they allow for more precision compution. They are a different numbering format used and will be implemented into the pipelined base processor another ALU machine with a multiplexer if we want that value.
 
+### 2. Safety checker
+This is a module that was added to the main flow of the processor. Its purpose it to act as an additional check to see if the new posit and regular ALUs agree with their outputs. They should if there is no problem with the modules and inputs. If there is some sort of disturbance then we can flag this so that we can check what has happened. It is an additional safety check incase anything wrong happens.
