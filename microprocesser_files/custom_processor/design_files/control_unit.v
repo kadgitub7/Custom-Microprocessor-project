@@ -21,9 +21,14 @@ module control_unit(
                    (opcode == 6'b000100) ? 2'b01 : // BEQ instruction
                    2'b00; // Default to load/store instructions
 
+    wire is_posit_add = (opcode == 6'b000000 && funct == 6'b101100);
+    wire is_posit_mul = (opcode == 6'b000000 && funct == 6'b101101);
+
     assign ALUControl = (ALUOp == 2'b00) ? 3'b010 : // Load/Store: ADD
                         (ALUOp == 2'b01) ? 3'b110 : // Branch: SUB
-                        (ALUOp == 2'b10) ? ((funct == 6'b100000) ? 3'b010 : // R-type: ADD
+                        (ALUOp == 2'b10) ? (is_posit_add ? 3'b011 : // R-type custom: POSIT ADD
+                                            is_posit_mul ? 3'b111 : // R-type custom: POSIT MUL
+                                            (funct == 6'b100000) ? 3'b010 : // R-type: ADD
                                             (funct == 6'b100010) ? 3'b110 : // R-type: SUB
                                             (funct == 6'b100100) ? 3'b000 : // R-type: AND
                                             (funct == 6'b100101) ? 3'b001 : // R-type: OR

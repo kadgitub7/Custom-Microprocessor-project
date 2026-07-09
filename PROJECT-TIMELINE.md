@@ -118,3 +118,8 @@ There are three main disadvantages with the single cycle processor.
 
 The mulitcycle processor does this efficiently, it utilizes registers in teh middle processes so that long instructions go through the same time, but a short instruction can be finished early and exit with the result.
 It uses only 1 adder to do all its operations and uses 1 large memory file for everything.
+
+## Custom Processor
+### 1. Posit varient
+Posits are used because they allow for more precision compution. They are a different numbering format used and will be implemented into the pipelined base processor another ALU machine with a multiplexer if we want that value.
+
