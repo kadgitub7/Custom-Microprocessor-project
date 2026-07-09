@@ -125,3 +125,6 @@ Posits are used because they allow for more precision compution. They are a diff
 
 ### 2. Safety checker
 This is a module that was added to the main flow of the processor. Its purpose it to act as an additional check to see if the new posit and regular ALUs agree with their outputs. They should if there is no problem with the modules and inputs. If there is some sort of disturbance then we can flag this so that we can check what has happened. It is an additional safety check incase anything wrong happens.
+
+### 3. BNN Co-processor
+This is a small lightweight bnn co processor. Many of the Edge AI neural network accelerators use -1 and 1 as values, it then becomes easy to do mulitplication and addition with those values and can save hardware and speed. Added a small co-processor system that can be integrated on the side of the main processor which allows us to push commands and do simple bnn operations using XOR and such.
