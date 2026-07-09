@@ -102,6 +102,8 @@ module processor_top(
     wire [1:0] ALUControl_E_posit;
     wire [7:0] ALUOutE_posit;
     wire usePositE;
+    wire alu_fault_E;
+    wire parity_bit_E;
 
     mux_gen alu_a_mux(.a(RD1_E), .b(PCPlus4E), .sel(1'b0), .out(SrcA_E));
     mux_gen alu_b_mux(.a(RD2_E), .b(SignImm_E), .sel(ALUSrc_E), .out(SrcB_E));
@@ -125,11 +127,13 @@ module processor_top(
         .result_o(ALUOutE_posit)
     );
 
-    mux_gen #(.WIDTH(32)) posit_result_mux(
-        .a(ALUOutE),
-        .b(ALUOutE_posit_ext),
-        .sel(usePositE),
-        .out(ALUOutE_final)
+    alu_integrity_checker #(.WIDTH(32)) alu_checker_e(
+        .alu_result_i(ALUOutE),
+        .posit_result_i(ALUOutE_posit_ext),
+        .use_posit_i(usePositE),
+        .checked_result_o(ALUOutE_final),
+        .fault_o(alu_fault_E),
+        .parity_bit_o(parity_bit_E)
     );
 
     // ========== EX/MEM PIPELINE REGISTER ==========
