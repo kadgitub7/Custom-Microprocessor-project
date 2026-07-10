@@ -5,7 +5,7 @@ module posit_addsub #(
     input [WIDTH-1:0] a_i,
     input [WIDTH-1:0] b_i,
     input addsub_i,
-    output reg [WIDTH-1:0] result_o
+    output wire [WIDTH-1:0] result_o
 );
 
     wire signed [31:0] a_val;

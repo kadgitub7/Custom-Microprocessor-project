@@ -72,7 +72,7 @@ module posit_encoder #(
             end
 
             if (frac_len > 0) begin
-                frac_val = integer'(frac * (2.0 ** frac_len) + 0.5);
+                frac_val = $rtoi(frac * (2.0 ** frac_len) + 0.5);
                 if (frac_val >= (1 << frac_len)) begin
                     frac_val = (1 << frac_len) - 1;
                 end

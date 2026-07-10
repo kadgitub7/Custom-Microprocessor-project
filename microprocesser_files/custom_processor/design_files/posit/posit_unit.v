@@ -8,8 +8,8 @@ module posit_unit #(
     output [WIDTH-1:0] result_o
 );
 
-    reg [WIDTH-1:0] addsub_result;
-    reg [WIDTH-1:0] mul_result;
+    wire [WIDTH-1:0] addsub_result;
+    wire [WIDTH-1:0] mul_result;
 
     posit_addsub #(.WIDTH(WIDTH), .ES(ES)) u_addsub (
         .a_i(a_i),

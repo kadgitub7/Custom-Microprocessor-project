@@ -91,11 +91,11 @@ module posit_decoder #(
             end else begin
                 magnitude = magnitude / (useed ** (-k));
             end
-
+            
             if (sign_bit < 0) begin
-                value_o = -integer'(magnitude + 0.5);
+                value_o = -$rtoi(magnitude + 0.5);
             end else begin
-                value_o = integer'(magnitude + 0.5);
+                value_o = $rtoi(magnitude + 0.5);
             end
         end
     end
