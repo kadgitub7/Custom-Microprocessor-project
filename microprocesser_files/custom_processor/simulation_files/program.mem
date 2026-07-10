@@ -1,0 +1,14 @@
+20020005    // Line 0 (Address 0): addi $v0, $zero, 5
+20030007    // Line 1 (Address 4): addi $v1, $zero, 7
+00432020    // Line 2 (Address 8): add $a0, $v0, $v1
+00622822    // Line 3 (Address 12): sub $a1, $v1, $v0
+2002000C    // Line 4 (Address 16): addi $v0, $zero, 12
+2003000A    // Line 5 (Address 20): addi $v1, $zero, 10
+00432024    // Line 6 (Address 24): and $a0, $v0, $v1
+00432825    // Line 7 (Address 28): or $a1, $v0, $v1
+20020003    // Line 8 (Address 32): addi $v0, $zero, 3
+20030005    // Line 9 (Address 36): addi $v1, $zero, 5
+0043202A    // Line 10 (Address 40): slt $a0, $v0, $v1
+20020019    // Line 11 (Address 44): addi $v0, $zero, 25
+AC020000    // Line 12 (Address 48): sw $v0, 0($zero)
+8C030000    // Line 13 (Address 52): lw $v1, 0($zero)

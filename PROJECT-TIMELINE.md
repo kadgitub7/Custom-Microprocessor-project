@@ -128,3 +128,6 @@ This is a module that was added to the main flow of the processor. Its purpose i
 
 ### 3. BNN Co-processor
 This is a small lightweight bnn co processor. Many of the Edge AI neural network accelerators use -1 and 1 as values, it then becomes easy to do mulitplication and addition with those values and can save hardware and speed. Added a small co-processor system that can be integrated on the side of the main processor which allows us to push commands and do simple bnn operations using XOR and such.
+
+### 4. Created C++ 
+Run a script so that we can actually compile and run a small addition and multiplication script to test if the processor correctly does its job.
