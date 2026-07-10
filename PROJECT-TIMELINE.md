@@ -131,3 +131,6 @@ This is a small lightweight bnn co processor. Many of the Edge AI neural network
 
 ### 4. Created C++ 
 Run a script so that we can actually compile and run a small addition and multiplication script to test if the processor correctly does its job.
+
+### 5. Ran full processor
+Results are in respective output and waveform files, ran simple commands and provided the textual values in the registers
