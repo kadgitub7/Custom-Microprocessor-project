@@ -3,10 +3,20 @@ module processor_top(
     input reset_PC
 );
 
+    // ========== HAZARD / PIPELINE CONTROL ==========
+    wire stall;
+    wire id_ex_flush;
+    wire if_id_flush;
+    wire pc_en;
+    wire branch_taken_E;
+
+    assign pc_en = !stall;
+    assign id_ex_flush = stall;
+
     // ========== FETCH STAGE (F) ==========
     wire [31:0] PC_F, PC_F_next, PC_plus4_F, InstrF;
     
-    PC_reg PC_F_reg(.clk(clk), .reset(reset_PC), .D(PC_F_next), .Q(PC_F), .Q_not());
+    PC_reg PC_F_reg(.clk(clk), .reset(reset_PC), .en(pc_en), .D(PC_F_next), .Q(PC_F), .Q_not());
     instruction_memory IM(.addr(PC_F), .RD(InstrF));
     PC_incrementer pc_inc(.PC_in(PC_F), .PC_out(PC_plus4_F));
 
@@ -15,6 +25,9 @@ module processor_top(
     
     if_id_reg if_id(
         .clk(clk),
+        .reset(reset_PC),
+        .en(pc_en),
+        .flush(if_id_flush),
         .InstrF(InstrF),
         .PCPlus4F(PC_plus4_F),
         .InstrD(InstrD),
@@ -59,11 +72,14 @@ module processor_top(
     // ========== ID/EX PIPELINE REGISTER ==========
     wire [31:0] RD1_E, RD2_E, SignImm_E, PCPlus4E;
     wire [4:0] Rs_E, Rt_E, Rd_E;
+    wire [5:0] opcode_E, funct_E;
     wire RegDst_E, ALUSrc_E, MemtoReg_E, RegWrite_E, MemWrite_E, Branch_E;
     wire [2:0] ALUControl_E;
 
     id_ex_reg id_ex(
         .clk(clk),
+        .reset(reset_PC),
+        .flush(id_ex_flush),
         .RD1_D(RD1_D),
         .RD2_D(RD2_D),
         .SignImm_D(SignImm_D),
@@ -71,6 +87,8 @@ module processor_top(
         .Rs_D(Rs_D),
         .Rt_D(Rt_D),
         .Rd_D(Rd_D),
+        .opcode_D(InstrD[31:26]),
+        .funct_D(InstrD[5:0]),
         .RegDst_D(RegDst_D),
         .ALUSrc_D(ALUSrc_D),
         .MemtoReg_D(MemtoReg_D),
@@ -85,6 +103,8 @@ module processor_top(
         .Rs_E(Rs_E),
         .Rt_E(Rt_E),
         .Rd_E(Rd_E),
+        .opcode_E(opcode_E),
+        .funct_E(funct_E),
         .RegDst_E(RegDst_E),
         .ALUSrc_E(ALUSrc_E),
         .MemtoReg_E(MemtoReg_E),
@@ -94,10 +114,34 @@ module processor_top(
         .ALUControl_E(ALUControl_E)
     );
 
+    // ========== FORWARDING UNIT ==========
+    wire [4:0] WriteRegM;
+    wire forwardAE, forwardBE, forwardAW, forwardBW;
+    wire [31:0] ForwardA, ForwardB, ForwardB_store;
+
+    assign WriteRegM = RegDst_M ? Rd_M : Rt_M;
+    assign forwardAE = RegWrite_M && (WriteRegM != 5'b0) && (WriteRegM == Rs_E);
+    assign forwardBE = RegWrite_M && (WriteRegM != 5'b0) && (WriteRegM == Rt_E);
+    assign forwardAW = RegWrite_W && (WriteRegW != 5'b0) && (WriteRegW == Rs_E) && !forwardAE;
+    assign forwardBW = RegWrite_W && (WriteRegW != 5'b0) && (WriteRegW == Rt_E) && !forwardBE;
+
+    assign ForwardA = forwardAE ? ALUOutM :
+                      forwardAW ? WB_DataW :
+                      RD1_E;
+    assign ForwardB = forwardBE ? ALUOutM :
+                      forwardBW ? WB_DataW :
+                      RD2_E;
+    assign ForwardB_store = ForwardB;
+
+    // Load-use hazard: stall when lw in EX writes a register read by instruction in D
+    assign stall = MemtoReg_E && RegWrite_E &&
+                   ((Rt_E == Rs_D) || (Rt_E == Rt_D));
+
     // ========== EXECUTE STAGE (E) ==========
     wire [31:0] SrcA_E, SrcB_E, ALUOutE;
-    wire [31:0] ALUOutE_posit_ext;
+    wire [31:0] ALUOutE_checked;
     wire [31:0] ALUOutE_final;
+    wire [31:0] ALUOutE_posit_ext;
     wire zero_E;
     wire [1:0] ALUControl_E_posit;
     wire [7:0] ALUOutE_posit;
@@ -108,14 +152,15 @@ module processor_top(
     wire [31:0] bnn_acc_E;
     wire bnn_done_E;
 
-    mux_gen alu_a_mux(.a(RD1_E), .b(PCPlus4E), .sel(1'b0), .out(SrcA_E));
-    mux_gen alu_b_mux(.a(RD2_E), .b(SignImm_E), .sel(ALUSrc_E), .out(SrcB_E));
+    mux_gen alu_a_mux(.a(ForwardA), .b(PCPlus4E), .sel(1'b0), .out(SrcA_E));
+    mux_gen alu_b_mux(.a(ForwardB), .b(SignImm_E), .sel(ALUSrc_E), .out(SrcB_E));
 
-    assign ALUControl_E_posit = (ALUControl_E == 3'b111) ? 2'b01 : 2'b00;
-    assign usePositE = (ALUControl_E == 3'b011 || ALUControl_E == 3'b111);
+    assign ALUControl_E_posit = (funct_E == 6'b101101) ? 2'b01 : 2'b00;
+    assign usePositE = (ALUControl_E == 3'b011) ||
+                       (ALUControl_E == 3'b111 && funct_E == 6'b101101);
     assign ALUOutE_posit_ext = {24'b0, ALUOutE_posit};
-    assign bnn_op_E = (ALUControl_E == 3'b100) ? ((InstrD[31:26] == 6'b111100) ? 2'b00 :
-                                              (InstrD[31:26] == 6'b111101) ? 2'b01 : 2'b10) : 2'b11;
+    assign bnn_op_E = (ALUControl_E == 3'b100) ? ((opcode_E == 6'b111100) ? 2'b00 :
+                                              (opcode_E == 6'b111101) ? 2'b01 : 2'b10) : 2'b11;
 
     alu alu_e(
         .SrcA(SrcA_E),
@@ -136,7 +181,7 @@ module processor_top(
         .alu_result_i(ALUOutE),
         .posit_result_i(ALUOutE_posit_ext),
         .use_posit_i(usePositE),
-        .checked_result_o(ALUOutE_final),
+        .checked_result_o(ALUOutE_checked),
         .fault_o(alu_fault_E),
         .parity_bit_o(parity_bit_E)
     );
@@ -152,7 +197,7 @@ module processor_top(
     );
 
     mux_gen #(.WIDTH(32)) bnn_result_mux(
-        .a(ALUOutE_final),
+        .a(ALUOutE_checked),
         .b(bnn_acc_E),
         .sel(ALUControl_E == 3'b100),
         .out(ALUOutE_final)
@@ -166,7 +211,7 @@ module processor_top(
     ex_mem_reg ex_mem(
         .clk(clk),
         .ALUOutE(ALUOutE_final),
-        .RD2_E(RD2_E),
+        .RD2_E(ForwardB_store),
         .Rt_E(Rt_E),
         .Rd_E(Rd_E),
         .RegDst_E(RegDst_E),
@@ -238,6 +283,11 @@ module processor_top(
     );
 
     // ========== PC NEXT LOGIC ==========
-    assign PC_F_next = PC_plus4_F;
+    wire [31:0] PCBranch_E;
+
+    assign PCBranch_E = PCPlus4E + (SignImm_E << 2);
+    assign branch_taken_E = Branch_E && zero_E;
+    assign if_id_flush = branch_taken_E;
+    assign PC_F_next = branch_taken_E ? PCBranch_E : PC_plus4_F;
 
 endmodule

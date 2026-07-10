@@ -7,7 +7,7 @@ module PC_reg_tb();
     wire [31:0] Q;
     wire [31:0] Q_not;
     
-    PC_reg uut(.clk(clk), .reset(reset), .D(D), .Q(Q), .Q_not(Q_not));
+    PC_reg uut(.clk(clk), .reset(reset), .en(1'b1), .D(D), .Q(Q), .Q_not(Q_not));
     
     initial begin
         clk = 0;

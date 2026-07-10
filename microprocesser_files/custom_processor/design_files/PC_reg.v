@@ -1,6 +1,7 @@
 module PC_reg(
     input clk,
     input reset,
+    input en,
     input [31:0] D,
     output reg [31:0] Q,
     output reg [31:0] Q_not
@@ -9,7 +10,7 @@ module PC_reg(
         if (reset) begin
             Q     <= 32'b0;
             Q_not <= {32{1'b1}}; //32 1's
-        end else begin
+        end else if (en) begin
             Q     <= D;
             Q_not <= ~D;
         end

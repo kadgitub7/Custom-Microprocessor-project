@@ -11,6 +11,7 @@
 #include <map>
 #include <bitset>
 #include <sstream>
+#include <vector>
 
 using namespace std;
 
@@ -66,22 +67,31 @@ int main() {
     // Test program: Add two numbers and store result then multiply and store result
     vector<uint32_t> instructions;
     
-    // addi $v0, $zero, 5    (Load 5 into $v0)
-    instructions.push_back(encodeI(0x08, 0, 2, 5));
-    
-    // addi $v1, $zero, 6    (Load 6 into $v1)
-    instructions.push_back(encodeI(0x08, 0, 3, 6));
+    instructions.push_back(encodeI(0x08,0,2,5));   // addi $v0,$zero,5
+    instructions.push_back(encodeI(0x08,0,3,7));   // addi $v1,$zero,7
+    instructions.push_back(encodeR(0,2,3,4,0,0x20)); // add $a0,$v0,$v1
 
-    instructions.push_back(encodeI(0x08, 0, 4, 2)); // Load 2 into $a0 for multiplication
-    
-    // add $a0, $v0, $v1     (Add $v0 and $v1, store in $a0)
-    instructions.push_back(encodeR(0, 2, 3, 4, 0, 0x20));
-    
-    // addi $a1, $zero, 10   (Load 10 into $a1 for comparison)
-    instructions.push_back(encodeI(0x08, 0, 5, 10));
+    instructions.push_back(encodeR(0,3,2,5,0,0x22)); // sub $a1,$v1,$v0
 
-    instructions.push_back(encodeR(0, 4, 5, 2, 0, 0x24)); // multiply $a0 and $a1, store in $v0 (custom instruction)
+    instructions.push_back(encodeI(0x08,0,2,12)); // 1100
+    instructions.push_back(encodeI(0x08,0,3,10)); // 1010
+    instructions.push_back(encodeR(0,2,3,4,0,0x24)); // and
+
+    instructions.push_back(encodeR(0,2,3,5,0,0x25)); // or
+
+    instructions.push_back(encodeI(0x08,0,2,3));
+    instructions.push_back(encodeI(0x08,0,3,5));
+    instructions.push_back(encodeR(0,2,3,4,0,0x2A)); // slt
+
+    // addi $v0,$zero,25
+    instructions.push_back(encodeI(0x08,0,2,25));
+    // sw $v0,0($zero)
+    instructions.push_back(encodeI(0x2B,0,2,0));
+    // lw $v1,0($zero)
+    instructions.push_back(encodeI(0x23,0,3,0));
+
     
+
     // Write instructions to file
     for (size_t i = 0; i < instructions.size(); i++) {
         outFile << hex << uppercase << instructions[i];
