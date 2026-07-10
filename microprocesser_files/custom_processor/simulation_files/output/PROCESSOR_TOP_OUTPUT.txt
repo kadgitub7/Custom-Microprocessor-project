@@ -1,0 +1,14 @@
+===== SIMULATION COMPLETE =====
+Final register state:
+R0 (zero) =          0
+R2 (v0)   =         25
+R3 (v1)   =         25
+R4 (a0)   =          1
+R5 (a1)   =         14
+R6 (a2)   =          0
+R7 (a3)   =          0
+$finish called at time : 520 ns : File "C:/Users/kadhi/custom-Microprocessor/custom-Microprocessor.srcs/sim_1/new/processor_top_tb.v" Line 34
+xsim: Time (s): cpu = 00:00:17 ; elapsed = 00:00:17 . Memory (MB): peak = 2371.996 ; gain = 0.000
+INFO: [USF-XSim-96] XSim completed. Design snapshot 'processor_top_tb_behav' loaded.
+INFO: [USF-XSim-97] XSim simulation ran for 1000ns
+launch_simulation: Time (s): cpu = 00:00:23 ; elapsed = 00:00:33 . Memory (MB): peak = 2371.996 ; gain = 0.000
