@@ -24,10 +24,17 @@ module register_file(
         end
     end
     
-    // combinationally read the value at the address index in the register storage
+    // Combinational read with internal bypass (forward WB write to same-cycle ID read)
     always @(*) begin
-        RD1 = register_storage[addr1];
-        RD2 = register_storage[addr2];
+        if (WE3 && addr3 != 5'b0 && addr3 == addr1)
+            RD1 = WD3;
+        else
+            RD1 = register_storage[addr1];
+
+        if (WE3 && addr3 != 5'b0 && addr3 == addr2)
+            RD2 = WD3;
+        else
+            RD2 = register_storage[addr2];
     end
     
 endmodule

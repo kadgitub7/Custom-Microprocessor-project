@@ -268,7 +268,7 @@ module processor_top(
     wire [31:0] WB_DataW;
     wire [4:0] WriteRegW;
 
-    mux_gen write_reg_mux(
+    mux_gen #(.WIDTH(5)) write_reg_mux(
         .a(Rt_W),
         .b(Rd_W),
         .sel(RegDst_W),
